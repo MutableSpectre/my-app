@@ -24,7 +24,7 @@ export default function Weather() {
                     <img src="https://ssl.gstatic.com/onebox/weather/64/partly_cloudy.png" alt="Mostly Cloudy" />
                     6°
                 </div>
-                <div ClassName="col-6">
+                <div className="col-6">
                     <ul>
                         <li>Percipitation: 15%</li>
                         <li>Humidity: 72%</li>
@@ -33,5 +33,5 @@ export default function Weather() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
