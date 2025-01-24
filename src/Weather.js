@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import "./Weather.css";
 
 export default function Weather() {
+    const [ready, setReady] = useState(false);
+    const [temperature, setTemperature] = useState(null);
+
+    function handleResponse(response) {
+        console.log(response.data);
+        setTemperature(response.data.main.temp);
+        setReady(true);
+    }
+
+    if (ready) {
     return (
         <div className="Weather">
             <form>
@@ -23,7 +34,7 @@ export default function Weather() {
                 <div className="col-6">
                     <div className="clearfix">
                         <img src="https://ssl.gstatic.com/onebox/weather/64/partly_cloudy.png" alt="Mostly Cloudy" className="float-left" />
-                            <span className="Temperature">6</span>
+                            <span className="Temperature">{Math.round(temperature)}</span>
                             <span className="Unit">°C</span>
                     </div> 
                 </div> 
@@ -37,4 +48,12 @@ export default function Weather() {
             </div>
         </div>
     );
+  } else {
+    const apiKey = "b34d15e8be226477a0368b534e799422";
+    let city = "Lansing";
+    let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    axios.get(apiUrl).then(handleResponse);
+
+    return "Loading Weather Data..."
+  };
 }
