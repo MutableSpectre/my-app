@@ -30,8 +30,24 @@
   list-style: none;
 }
 
+.Weather img {
+  display: inline-block;
+  height: 68px;
+  vertical-align: top;
+}
+
 .Weather .Temperature {
   color: rgb(33, 33, 33);
-  font-weight: bold;
   font-size: 64px;
+  font-weight: 400;
+  line-height: 64px;
+}
+
+.Weather .Unit {
+  color: rgb(33, 33, 33);
+  font-size: 16px;
+  font-weight: 400;
+  position: relative;
+  line-height: 1;
+  top: -34px;
 }
