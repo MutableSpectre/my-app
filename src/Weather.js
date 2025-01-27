@@ -1,40 +1,43 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
+import "./Weather.css";
 import WeatherInfo from "./WeatherInfo";
 import WeatherForecast from "./WeatherForecast";
 import axios from "axios";
-import "./Weather.css";
 
-export default function Weather(props) {
-  const [weatherData, setWeatherData] = useState({ ready: false });
-  const [city, setCity] = useState(props.defaultCity);
+export default function Weather({ defaultCity }) {
+  const [city, setCity] = useState(defaultCity);
+  const [weatherData, setWeatherData] = useState({
+    ready: false,
+  });
 
-  function handleResponse(response) {
+  function handleResponse(res) {
     setWeatherData({
       ready: true,
-      coordinates: response.data.coord,
-      temperature: response.data.main.temp,
-      humidity: response.data.main.humidity,
-      date: new Date(response.data.dt * 1000),
-      description: response.data.weather[0].description,
-      icon: response.data.weather[0].icon,
-      wind: response.data.wind.speed,
-      city: response.data.name,
+      date: new Date(res.data.dt * 1000),
+      description: res.data.weather[0].description,
+      temperature: res.data.main.temp,
+      humidity: res.data.main.humidity,
+      wind: res.data.wind.speed,
+      city: res.data.name,
+      icon: res.data.weather[0].icon,
+      coordinates: res.data.coord,
     });
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function search() {
+    const apiKey = "8944afa6845bd7c413a687258d3211ef";
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    axios.get(apiUrl).then(handleResponse);
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
     search();
   }
 
-  function handleCityChange(event) {
-    setCity(event.target.value);
-  }
-
-  function search() {
-    const apiKey = "5f472b7acba333cd8a035ea85a0d4d4c";
-    let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-    axios.get(apiUrl).then(handleResponse);
+  function handleCityChange(e) {
+    setCity(e.target.value);
   }
 
   if (weatherData.ready) {
@@ -69,3 +72,8 @@ export default function Weather(props) {
     return "Loading...";
   }
 }
+
+// PropTypes validation
+Weather.propTypes = {
+  defaultCity: PropTypes.string.isRequired,
+};

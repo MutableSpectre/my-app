@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import PropTypes from "prop-types";
+import WeatherForecastDay from "./WeatherForecastDay";
 import "./WeatherForecast.css";
 import axios from "axios";
-import WeatherForecastDay from "./WeatherForecastDay";
+import { useState, useEffect } from "react";
 
-export default function WeatherForecast(props) {
-  let [loaded, setLoaded] = useState(false);
-  let [forecast, setForecast] = useState(null);
+export default function WeatherForecast({ coordinates }) {
+  const [loaded, setLoaded] = useState(false);
+  const [forecast, setForeccast] = useState(null);
 
-  function handleResponse(response) {
-    setForecast(response.data.daily);
+  useEffect(() => {
+    setLoaded(false);
+  }, [coordinates]);
+
+  function load() {
+    const apiKey = "3c92800ddbac627t6co4ffbb88bbe1bc";
+    const apiUrl = `https://api.shecodes.io/weather/v1/forecast?lon=${coordinates.lon}&lat=${coordinates.lat}&key=${apiKey}&units=metric`;
+
+    axios.get(apiUrl).then(handleResponse);
+  }
+
+  function handleResponse(res) {
+    setForeccast(res.data.daily);
     setLoaded(true);
   }
 
@@ -16,20 +28,31 @@ export default function WeatherForecast(props) {
     return (
       <div className="WeatherForecast">
         <div className="row">
-          <div className="col">
-            <WeatherForecastDay data={forecast[0]} />
-          </div>
+          {forecast.map(function (dailyForecast, index) {
+            if (index < 6) {
+              return (
+                <div className="col" key={index}>
+                  <WeatherForecastDay data={dailyForecast} />
+                </div>
+              );
+            } else {
+              return null;
+            }
+          })}
         </div>
       </div>
     );
   } else {
-    let apiKey = "5f472b7acba333cd8a035ea85a0d4d4c";
-    let longitude = props.coordinates.lon;
-    let latitude = props.coordinates.lat;
-    let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
-
-    axios.get(apiUrl).then(handleResponse);
+    load();
 
     return null;
   }
 }
+
+// PropTypes validation
+WeatherForecast.propTypes = {
+  coordinates: PropTypes.shape({
+    lon: PropTypes.number.isRequired,
+    lat: PropTypes.number.isRequired,
+  }).isRequired,
+};
